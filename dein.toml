@@ -1,0 +1,136 @@
+# === base
+[[plugins]] # pluginマネージャ
+repo = 'Shougo/dein.vim'
+
+[[plugins]] # 非同期処理を可能にする。
+repo = 'Shougo/vimproc.vim'
+build = 'make'
+
+[[plugins]] # カーソル位置のコンテキストのfiletypeを判定する
+repo = 'Shougo/context_filetype.vim'
+
+# === main
+[[plugins]] # ステータスラインの強化
+repo = 'itchyny/lightline.vim' 
+hook_add = '''
+    set laststatus=2
+    set noshowmode
+
+    let g:lightline = {
+        \ 'active': {
+        \   'left': [ [ 'mode', 'paste' ],
+        \             [ 'readonly', 'filename', 'modified', 'arduino', 'quickrun' ], ]
+        \ },
+        \ 'component_function': {
+        \   'arduino': 'ArduinoStatus',
+        \   'quickrun': 'QuickRunStatus',
+        \ },
+        \ }
+'''
+
+[[plugins]] # fcitxのIME制御
+repo = 'lilydjwg/fcitx.vim' 
+
+[[plugins]] # カーソル位置のコンテキストに合わせてfiletypeを切り替える
+repo = 'osyo-manga/vim-precious'
+depends = ['context_filetype.vim']
+
+[[plugins]] # ファイル実行
+repo = 'thinca/vim-quickrun'
+hook_add = '''
+    let g:quickrun_config = {
+        \ '_': {
+        \     'runner': 'vimproc',
+        \     'runner/vimproc/updatetime': 60,
+        \     'hook/time/enable': '1',
+        \     'outputter/buffer/into': 1,
+        \     'outputter/buffer/split': 'botright 8sp',
+        \     'outputter/buffer/close_on_empty': 1,
+        \ },
+        \ 'geo': {
+        \     'type': 'geo',
+        \     'command': 'gmsh',
+        \ },
+        \ }
+    let g:quickrun_no_default_key_mappings = 1
+    " nnoremap \r :cclose<CR>:write<CR>:QuickRun -mode n<CR>
+    " xnoremap \r :<C-U>cclose<CR>:write<CR>gv:QuickRun -mode v<CR>
+    map <Space>R <Plug>(quickrun)
+    au FileType qf nnoremap <silent><buffer>q :quit<CR>
+    nnoremap <expr><silent> <C-c> quickrun#is_running() ? quickrun#sweep_sessions() : "\<C-c>"
+
+    function! QuickRunStatus()
+        if quickrun#is_running()
+            return 'Running...'
+        else
+            return ''
+        endif
+    endfunction
+'''
+
+
+# === color
+[[plugins]] # vimのcolorscheme集
+repo = 'flazz/vim-colorschemes' 
+hook_add = 'colorscheme LightDefault'
+
+# === input
+[[plugins]] # インデントを見やすく着色する
+repo = 'nathanaelkane/vim-indent-guides' 
+hook_add = 'let g:indent_guides_enable_on_vim_startup = 1'
+
+[[plugins]] # コメントアウト入力支援
+repo = 'tpope/vim-commentary' 
+
+[[plugins]] # 括弧に関する入力を簡便にする。
+repo = 'tpope/vim-surround' 
+
+[[plugins]] # tab補完
+repo = 'ervandew/supertab'
+hook_add = '''
+    let g:SuperTabDefaultCompletionType = "context"
+'''
+
+# === search
+[[plugins]] # インクリメンタルサーチですべての候補をハイライトする。
+repo = 'haya14busa/incsearch.vim' 
+hook_add = '''
+    set incsearch
+    noremap // :<C-u>Migemo<CR>
+'''
+
+[[plugins]] # migemoを用いて日本語インクリメンタルサーチを行う。
+repo = 'haya14busa/incsearch-migemo.vim' 
+hook_add = '''
+    map m/ <Plug>(incsearch-migemo-/)
+    map m? <Plug>(incsearch-migemo-?)
+    map mg/ <Plug>(incsearch-migemo-stay)
+'''
+
+# === sudo
+# [[plugins]] # read or write files with sudo command (使えなかった。)
+# repo = 'lambdalisue/suda.vim'
+
+[[plugins]] # SudoWriteコマンドでsudoし忘れたファイルを保存できる。
+repo = 'chrisbra/sudoedit.vim' 
+
+# === tmux
+[[plugins]]# 画面分割時のpane移動をtmuxとシームレスする。
+repo = 'christoomey/vim-tmux-navigator' 
+hook_add = '''
+    let g:tmux_navigator_no_mappings = 1
+    nnoremap <silent> <S-Left> :TmuxNavigateLeft<cr>
+    nnoremap <silent> <S-Down> :TmuxNavigateDown<cr>
+    nnoremap <silent> <S-Up> :TmuxNavigateUp<cr>
+    nnoremap <silent> <S-Right> :TmuxNavigateRight<cr>
+    nnoremap <silent> <C-l> :TmuxNavigatePrevious<cr>
+'''
+[[plugins]]# 画面分割時のpaneサイズ変更をtmuxとシームレスにする。
+repo = 'melonmanchan/vim-tmux-resizer' 
+hook_add = '''
+    let g:tmux_resizer_no_mappings = 1
+    nnoremap <silent> <M-S-Left> :TmuxResizeLeft<cr>
+    nnoremap <silent> <M-S-Down> :TmuxResizeDown<cr>
+    nnoremap <silent> <M-S-Up> :TmuxResizeUp<cr>
+    nnoremap <silent> <M-S-Right> :TmuxResizeRight<cr>
+'''
